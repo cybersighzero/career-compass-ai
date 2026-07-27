@@ -16,11 +16,18 @@ import { Route as InterviewRouteImport } from './routes/interview'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardRoadmapRouteImport } from './routes/dashboard/roadmap'
 import { Route as DashboardResultsRouteImport } from './routes/dashboard/results'
 import { Route as DashboardQuizHistoryRouteImport } from './routes/dashboard/quiz-history'
 import { Route as DashboardInterviewHistoryRouteImport } from './routes/dashboard/interview-history'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminRolesRouteImport } from './routes/admin/roles'
+import { Route as AdminCompaniesRouteImport } from './routes/admin/companies'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as AdminStudentsIndexRouteImport } from './routes/admin/students/index'
+import { Route as AdminStudentsIdRouteImport } from './routes/admin/students/$id'
 
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
@@ -57,6 +64,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/dashboard/settings',
   path: '/dashboard/settings',
@@ -83,6 +95,36 @@ const DashboardInterviewHistoryRoute =
     path: '/dashboard/interview-history',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCompaniesRoute = AdminCompaniesRouteImport.update({
+  id: '/admin/companies',
+  path: '/admin/companies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/admin/analytics',
+  path: '/admin/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminStudentsIndexRoute = AdminStudentsIndexRouteImport.update({
+  id: '/admin/students/',
+  path: '/admin/students/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminStudentsIdRoute = AdminStudentsIdRouteImport.update({
+  id: '/admin/students/$id',
+  path: '/admin/students/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,12 +133,19 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
   '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
   '/dashboard/results': typeof DashboardResultsRoute
   '/dashboard/roadmap': typeof DashboardRoadmapRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/students/$id': typeof AdminStudentsIdRoute
+  '/admin/students/': typeof AdminStudentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -105,12 +154,19 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
   '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
   '/dashboard/results': typeof DashboardResultsRoute
   '/dashboard/roadmap': typeof DashboardRoadmapRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/admin/students/$id': typeof AdminStudentsIdRoute
+  '/admin/students': typeof AdminStudentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -120,12 +176,19 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/companies': typeof AdminCompaniesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
   '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
   '/dashboard/results': typeof DashboardResultsRoute
   '/dashboard/roadmap': typeof DashboardRoadmapRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/students/$id': typeof AdminStudentsIdRoute
+  '/admin/students/': typeof AdminStudentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -136,12 +199,19 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/quiz'
     | '/results'
+    | '/admin/analytics'
+    | '/admin/companies'
+    | '/admin/roles'
+    | '/admin/settings'
     | '/dashboard/interview-history'
     | '/dashboard/quiz-history'
     | '/dashboard/results'
     | '/dashboard/roadmap'
     | '/dashboard/settings'
+    | '/admin/'
     | '/dashboard/'
+    | '/admin/students/$id'
+    | '/admin/students/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,12 +220,19 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/quiz'
     | '/results'
+    | '/admin/analytics'
+    | '/admin/companies'
+    | '/admin/roles'
+    | '/admin/settings'
     | '/dashboard/interview-history'
     | '/dashboard/quiz-history'
     | '/dashboard/results'
     | '/dashboard/roadmap'
     | '/dashboard/settings'
+    | '/admin'
     | '/dashboard'
+    | '/admin/students/$id'
+    | '/admin/students'
   id:
     | '__root__'
     | '/'
@@ -164,12 +241,19 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/quiz'
     | '/results'
+    | '/admin/analytics'
+    | '/admin/companies'
+    | '/admin/roles'
+    | '/admin/settings'
     | '/dashboard/interview-history'
     | '/dashboard/quiz-history'
     | '/dashboard/results'
     | '/dashboard/roadmap'
     | '/dashboard/settings'
+    | '/admin/'
     | '/dashboard/'
+    | '/admin/students/$id'
+    | '/admin/students/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -179,12 +263,19 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   QuizRoute: typeof QuizRoute
   ResultsRoute: typeof ResultsRoute
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminCompaniesRoute: typeof AdminCompaniesRoute
+  AdminRolesRoute: typeof AdminRolesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   DashboardInterviewHistoryRoute: typeof DashboardInterviewHistoryRoute
   DashboardQuizHistoryRoute: typeof DashboardQuizHistoryRoute
   DashboardResultsRoute: typeof DashboardResultsRoute
   DashboardRoadmapRoute: typeof DashboardRoadmapRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  AdminStudentsIdRoute: typeof AdminStudentsIdRoute
+  AdminStudentsIndexRoute: typeof AdminStudentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -238,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/dashboard/settings'
@@ -273,6 +371,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardInterviewHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/roles': {
+      id: '/admin/roles'
+      path: '/admin/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/companies': {
+      id: '/admin/companies'
+      path: '/admin/companies'
+      fullPath: '/admin/companies'
+      preLoaderRoute: typeof AdminCompaniesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/admin/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/students/': {
+      id: '/admin/students/'
+      path: '/admin/students'
+      fullPath: '/admin/students/'
+      preLoaderRoute: typeof AdminStudentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/students/$id': {
+      id: '/admin/students/$id'
+      path: '/admin/students/$id'
+      fullPath: '/admin/students/$id'
+      preLoaderRoute: typeof AdminStudentsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -283,12 +423,19 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   QuizRoute: QuizRoute,
   ResultsRoute: ResultsRoute,
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminCompaniesRoute: AdminCompaniesRoute,
+  AdminRolesRoute: AdminRolesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   DashboardInterviewHistoryRoute: DashboardInterviewHistoryRoute,
   DashboardQuizHistoryRoute: DashboardQuizHistoryRoute,
   DashboardResultsRoute: DashboardResultsRoute,
   DashboardRoadmapRoute: DashboardRoadmapRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
+  AdminIndexRoute: AdminIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  AdminStudentsIdRoute: AdminStudentsIdRoute,
+  AdminStudentsIndexRoute: AdminStudentsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

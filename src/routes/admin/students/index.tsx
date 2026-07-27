@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight, Download, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { students } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/admin/students")({
+export const Route = createFileRoute("/admin/students/")({
   head: () => ({
     meta: [
       { title: "Students · PlacePrep Admin" },

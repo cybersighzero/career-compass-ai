@@ -36,7 +36,7 @@ function StudentProfile() {
         <div className="card-surface p-6">
           <div className="flex items-center gap-3">
             <div className="grid size-14 place-items-center rounded-2xl bg-accent text-accent-foreground text-lg font-semibold">
-              {student.name.split(" ").map((x) => x[0]).slice(0, 2).join("")}
+              {student.name.split(" ").map((x: string) => x[0]).slice(0, 2).join("")}
             </div>
             <div>
               <div className="text-lg font-semibold">{student.name}</div>
