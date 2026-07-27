@@ -9,12 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResultsRouteImport } from './routes/results'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as InterviewRouteImport } from './routes/interview'
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardRoadmapRouteImport } from './routes/dashboard/roadmap'
+import { Route as DashboardResultsRouteImport } from './routes/dashboard/results'
+import { Route as DashboardQuizHistoryRouteImport } from './routes/dashboard/quiz-history'
+import { Route as DashboardInterviewHistoryRouteImport } from './routes/dashboard/interview-history'
 
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
@@ -40,6 +52,37 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/dashboard/settings',
+  path: '/dashboard/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoadmapRoute = DashboardRoadmapRouteImport.update({
+  id: '/dashboard/roadmap',
+  path: '/dashboard/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardResultsRoute = DashboardResultsRouteImport.update({
+  id: '/dashboard/results',
+  path: '/dashboard/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardQuizHistoryRoute = DashboardQuizHistoryRouteImport.update({
+  id: '/dashboard/quiz-history',
+  path: '/dashboard/quiz-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardInterviewHistoryRoute =
+  DashboardInterviewHistoryRouteImport.update({
+    id: '/dashboard/interview-history',
+    path: '/dashboard/interview-history',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +90,13 @@ export interface FileRoutesByFullPath {
   '/interview': typeof InterviewRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/results': typeof ResultsRoute
+  '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
+  '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
+  '/dashboard/results': typeof DashboardResultsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +104,13 @@ export interface FileRoutesByTo {
   '/interview': typeof InterviewRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/results': typeof ResultsRoute
+  '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
+  '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
+  '/dashboard/results': typeof DashboardResultsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +119,57 @@ export interface FileRoutesById {
   '/interview': typeof InterviewRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/results': typeof ResultsRoute
+  '/dashboard/interview-history': typeof DashboardInterviewHistoryRoute
+  '/dashboard/quiz-history': typeof DashboardQuizHistoryRoute
+  '/dashboard/results': typeof DashboardResultsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin-login' | '/interview' | '/onboarding' | '/quiz'
+  fullPaths:
+    | '/'
+    | '/admin-login'
+    | '/interview'
+    | '/onboarding'
+    | '/quiz'
+    | '/results'
+    | '/dashboard/interview-history'
+    | '/dashboard/quiz-history'
+    | '/dashboard/results'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin-login' | '/interview' | '/onboarding' | '/quiz'
-  id: '__root__' | '/' | '/admin-login' | '/interview' | '/onboarding' | '/quiz'
+  to:
+    | '/'
+    | '/admin-login'
+    | '/interview'
+    | '/onboarding'
+    | '/quiz'
+    | '/results'
+    | '/dashboard/interview-history'
+    | '/dashboard/quiz-history'
+    | '/dashboard/results'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin-login'
+    | '/interview'
+    | '/onboarding'
+    | '/quiz'
+    | '/results'
+    | '/dashboard/interview-history'
+    | '/dashboard/quiz-history'
+    | '/dashboard/results'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +178,24 @@ export interface RootRouteChildren {
   InterviewRoute: typeof InterviewRoute
   OnboardingRoute: typeof OnboardingRoute
   QuizRoute: typeof QuizRoute
+  ResultsRoute: typeof ResultsRoute
+  DashboardInterviewHistoryRoute: typeof DashboardInterviewHistoryRoute
+  DashboardQuizHistoryRoute: typeof DashboardQuizHistoryRoute
+  DashboardResultsRoute: typeof DashboardResultsRoute
+  DashboardRoadmapRoute: typeof DashboardRoadmapRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quiz': {
       id: '/quiz'
       path: '/quiz'
@@ -116,6 +231,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/dashboard/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/roadmap': {
+      id: '/dashboard/roadmap'
+      path: '/dashboard/roadmap'
+      fullPath: '/dashboard/roadmap'
+      preLoaderRoute: typeof DashboardRoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/results': {
+      id: '/dashboard/results'
+      path: '/dashboard/results'
+      fullPath: '/dashboard/results'
+      preLoaderRoute: typeof DashboardResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/quiz-history': {
+      id: '/dashboard/quiz-history'
+      path: '/dashboard/quiz-history'
+      fullPath: '/dashboard/quiz-history'
+      preLoaderRoute: typeof DashboardQuizHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/interview-history': {
+      id: '/dashboard/interview-history'
+      path: '/dashboard/interview-history'
+      fullPath: '/dashboard/interview-history'
+      preLoaderRoute: typeof DashboardInterviewHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +282,13 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewRoute: InterviewRoute,
   OnboardingRoute: OnboardingRoute,
   QuizRoute: QuizRoute,
+  ResultsRoute: ResultsRoute,
+  DashboardInterviewHistoryRoute: DashboardInterviewHistoryRoute,
+  DashboardQuizHistoryRoute: DashboardQuizHistoryRoute,
+  DashboardResultsRoute: DashboardResultsRoute,
+  DashboardRoadmapRoute: DashboardRoadmapRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
