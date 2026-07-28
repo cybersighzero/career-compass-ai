@@ -1,77 +1,94 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { StudentShell } from "@/components/layout/StudentShell";
-import { roadmap } from "@/lib/mock-data";
-import {
-  Award, BookOpen, CalendarDays, Code2, FileText, GraduationCap, Rocket, Sparkles, Target,
-} from "lucide-react";
+import { getGapAnalysis } from "@/lib/api";
+import { getStoredStudent } from "@/lib/session";
+import { Bot, Target } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/roadmap")({
   head: () => ({
     meta: [
       { title: "Your roadmap · PlacePrep AI" },
-      { name: "description", content: "A personalized 8-week roadmap to become placement ready." },
+      { name: "description", content: "AI-generated guidance based on your current skill gap." },
     ],
   }),
   component: RoadmapPage,
 });
 
-const sections = [
-  { key: "resume", title: "Resume", icon: FileText, items: roadmap.resume },
-  { key: "technical", title: "Technical Skills", icon: Code2, items: roadmap.technical },
-  { key: "soft", title: "Soft Skills", icon: Sparkles, items: roadmap.soft },
-  { key: "projects", title: "Projects", icon: Rocket, items: roadmap.projects },
-  { key: "certifications", title: "Certifications", icon: Award, items: roadmap.certifications },
-  { key: "practice", title: "Practice Plan", icon: Target, items: roadmap.practice },
-  { key: "interviewPrep", title: "Interview Preparation", icon: GraduationCap, items: roadmap.interviewPrep },
-  { key: "courses", title: "Courses", icon: BookOpen, items: roadmap.courses },
-];
-
 function RoadmapPage() {
+  const nav = useNavigate();
+  const student = getStoredStudent();
+
+  useEffect(() => {
+    if (!student) nav({ to: "/" });
+  }, [student, nav]);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["gap-analysis", student?.id],
+    queryFn: () => getGapAnalysis(student!.id),
+    enabled: !!student?.company_preference,
+    retry: false,
+  });
+
+  if (!student) return null;
+
   return (
-    <StudentShell title="Your personalized roadmap" subtitle="An 8-week plan tuned to your target role and current readiness.">
+    <StudentShell
+      title="Your roadmap"
+      subtitle="AI guidance based on your CGPA, skills, quiz score and interview status against your preferred company."
+    >
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
-          {sections.map(({ key, title, icon: Icon, items }) => (
-            <div key={key} className="card-surface p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="grid size-8 place-items-center rounded-lg bg-primary-soft text-primary"><Icon className="size-4" /></div>
-                <div className="text-sm font-semibold">{title}</div>
-              </div>
-              <ul className="space-y-2 text-sm text-foreground/85">
-                {items.map((t) => (
-                  <li key={t} className="flex gap-2.5"><span className="mt-2 size-1.5 rounded-full bg-primary shrink-0" /> {t}</li>
-                ))}
-              </ul>
+        <div className="lg:col-span-2 card-surface p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="grid size-8 place-items-center rounded-lg bg-primary-soft text-primary">
+              <Bot className="size-4" />
             </div>
-          ))}
+            <div className="text-sm font-semibold">AI gap analysis</div>
+          </div>
+          {!student.company_preference ? (
+            <p className="text-sm text-muted-foreground">
+              Set a preferred company in Settings first — the roadmap compares your profile against
+              that company's requirements.
+            </p>
+          ) : isLoading ? (
+            <p className="text-sm text-muted-foreground">Analyzing your profile…</p>
+          ) : isError ? (
+            <p className="text-sm text-muted-foreground">
+              Couldn't generate a roadmap right now. Try again shortly.
+            </p>
+          ) : (
+            <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line">
+              {data?.advice}
+            </p>
+          )}
         </div>
 
         <aside className="space-y-4">
           <div className="card-surface p-6">
             <div className="flex items-center gap-2 mb-3">
-              <div className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground"><CalendarDays className="size-4" /></div>
-              <div className="text-sm font-semibold">Timeline</div>
+              <div className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground">
+                <Target className="size-4" />
+              </div>
+              <div className="text-sm font-semibold">Missing skills</div>
             </div>
-            <ol className="relative border-l border-border pl-4 space-y-4">
-              {roadmap.timeline.map((t, i) => (
-                <li key={t.when} className="relative">
-                  <span className="absolute -left-[19px] top-1 grid size-3 place-items-center rounded-full border-2 border-background bg-primary" />
-                  <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t.when}</div>
-                  <div className="text-sm">{t.focus}</div>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div className="card-surface p-6">
-            <div className="text-sm font-semibold">Estimated impact</div>
-            <div className="mt-3 flex items-end gap-2">
-              <div className="text-3xl font-semibold">+12</div>
-              <div className="pb-1 text-xs text-muted-foreground">readiness in 8 weeks</div>
-            </div>
-            <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-chart-2 w-4/5" />
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">Based on completion of ≥80% of the plan and two mocks per week.</p>
+            {student.missing_skills ? (
+              <ul className="space-y-2 text-sm text-foreground/85">
+                {student.missing_skills
+                  .split(";")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .map((s) => (
+                    <li key={s} className="flex gap-2.5">
+                      <span className="mt-2 size-1.5 rounded-full bg-primary shrink-0" /> {s}
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Run a readiness check from your profile to see specific gaps.
+              </p>
+            )}
           </div>
         </aside>
       </div>

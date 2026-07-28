@@ -1,12 +1,22 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Map, ClipboardList, Video, Trophy, Settings,
-  LogOut, GraduationCap, ChevronRight, Bell, Search,
+  LayoutDashboard,
+  Map,
+  ClipboardList,
+  Video,
+  Trophy,
+  Settings,
+  LogOut,
+  GraduationCap,
+  ChevronRight,
+  Bell,
+  Search,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { brand, mockStudent } from "@/lib/mock-data";
+import { brand } from "@/lib/constants";
+import { getStoredStudent, clearStoredStudent } from "@/lib/session";
 
 const nav = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -17,10 +27,26 @@ const nav = [
   { to: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
-export function StudentShell({ children, title, subtitle, actions }: {
-  children: ReactNode; title: string; subtitle?: string; actions?: ReactNode;
+export function StudentShell({
+  children,
+  title,
+  subtitle,
+  actions,
+}: {
+  children: ReactNode;
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
 }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const student = getStoredStudent();
+  const initials = student
+    ? student.name
+        .split(" ")
+        .map((x) => x[0])
+        .slice(0, 2)
+        .join("")
+    : "";
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -40,7 +66,8 @@ export function StudentShell({ children, title, subtitle, actions }: {
             const Icon = n.icon;
             return (
               <Link
-                key={n.to} to={n.to}
+                key={n.to}
+                to={n.to}
                 className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                   active
                     ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
@@ -57,13 +84,20 @@ export function StudentShell({ children, title, subtitle, actions }: {
         <div className="border-t border-sidebar-border p-3">
           <div className="flex items-center gap-3 rounded-lg p-2">
             <div className="grid size-9 place-items-center rounded-full bg-accent text-accent-foreground text-xs font-semibold">
-              {mockStudent.avatar}
+              {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">{mockStudent.name}</div>
-              <div className="truncate text-[11px] text-muted-foreground">{mockStudent.regNo}</div>
+              <div className="truncate text-sm font-medium">{student?.name ?? "Signed out"}</div>
+              <div className="truncate text-[11px] text-muted-foreground">
+                {student?.roll_number ?? ""}
+              </div>
             </div>
-            <Link to="/" aria-label="Log out" className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
+            <Link
+              to="/"
+              aria-label="Log out"
+              onClick={() => clearStoredStudent()}
+              className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
               <LogOut className="size-4" />
             </Link>
           </div>

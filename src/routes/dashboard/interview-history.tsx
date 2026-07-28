@@ -1,54 +1,70 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { StudentShell } from "@/components/layout/StudentShell";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Video, Play } from "lucide-react";
+import { Video } from "lucide-react";
+import { getStoredStudent } from "@/lib/session";
+import { getInterviewHistory } from "@/lib/history";
 
 export const Route = createFileRoute("/dashboard/interview-history")({
   head: () => ({
     meta: [
       { title: "Interview history · PlacePrep AI" },
-      { name: "description", content: "AI interview sessions with feedback, transcripts, and scores." },
+      { name: "description", content: "AI interview sessions recorded in this browser." },
     ],
   }),
   component: InterviewHistory,
 });
 
-const items = [
-  { d: "Jul 24, 2026", track: "Full Stack · Behavioral + Technical", score: 74, duration: "38m", clarity: 8.2, depth: 6.8, structure: 7.4 },
-  { d: "Jul 09, 2026", track: "System Design Deep-dive", score: 68, duration: "45m", clarity: 7.6, depth: 6.2, structure: 7.0 },
-  { d: "Jun 28, 2026", track: "Behavioral Practice", score: 81, duration: "24m", clarity: 8.6, depth: 7.4, structure: 7.9 },
-];
-
 function InterviewHistory() {
+  const nav = useNavigate();
+  const student = getStoredStudent();
+
+  useEffect(() => {
+    if (!student) nav({ to: "/" });
+  }, [student, nav]);
+
+  if (!student) return null;
+  const items = getInterviewHistory(student.id);
+
   return (
-    <StudentShell title="Interview history" subtitle="Every AI mock interview, with feedback saved for review.">
-      <div className="grid gap-4">
-        {items.map((s) => (
-          <div key={s.d} className="card-surface card-hover p-5 flex flex-wrap items-center gap-4">
-            <div className="grid size-11 place-items-center rounded-xl bg-primary-soft text-primary shrink-0"><Video className="size-5" /></div>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold">{s.track}</div>
-              <div className="text-xs text-muted-foreground">{s.d} · {s.duration}</div>
+    <StudentShell
+      title="Interview history"
+      subtitle="AI mock interviews completed in this browser, with feedback."
+    >
+      {items.length === 0 ? (
+        <div className="card-surface p-8 text-center text-sm text-muted-foreground">
+          No interviews yet. Start one from your dashboard.
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {items.map((s, i) => (
+            <div key={i} className="card-surface card-hover p-5 flex flex-wrap items-center gap-4">
+              <div className="grid size-11 place-items-center rounded-xl bg-primary-soft text-primary shrink-0">
+                <Video className="size-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold">Interview #{s.interviewId}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(s.date).toLocaleString()} · {s.questionCount} questions
+                </div>
+                {s.aiFeedback && (
+                  <p className="mt-2 text-xs text-foreground/70 line-clamp-2">{s.aiFeedback}</p>
+                )}
+              </div>
+              <Badge
+                className={
+                  s.status === "completed"
+                    ? "bg-success/15 text-success border border-success/20"
+                    : "bg-warning/15 text-warning-foreground border border-warning/30"
+                }
+              >
+                {s.status}
+              </Badge>
             </div>
-            <div className="flex items-center gap-4 text-xs">
-              <Metric k="Clarity" v={s.clarity} />
-              <Metric k="Depth" v={s.depth} />
-              <Metric k="Structure" v={s.structure} />
-            </div>
-            <Badge className="bg-success/15 text-success border border-success/20">{s.score}/100</Badge>
-            <Button variant="outline" size="sm"><Play className="size-4" /> Replay</Button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </StudentShell>
-  );
-}
-function Metric({ k, v }: { k: string; v: number }) {
-  return (
-    <div className="text-center">
-      <div className="text-sm font-semibold tabular-nums">{v}</div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{k}</div>
-    </div>
   );
 }

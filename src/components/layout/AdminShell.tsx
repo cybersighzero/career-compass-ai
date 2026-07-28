@@ -1,10 +1,18 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, Building2, BookOpen, BarChart3, Settings,
-  LogOut, Shield, Bell,
+  LayoutDashboard,
+  Users,
+  Building2,
+  BookOpen,
+  BarChart3,
+  Settings,
+  LogOut,
+  Shield,
+  Bell,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { clearAdminSignedIn } from "@/lib/session";
 
 const nav = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -15,8 +23,16 @@ const nav = [
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-export function AdminShell({ children, title, subtitle, actions }: {
-  children: ReactNode; title: string; subtitle?: string; actions?: ReactNode;
+export function AdminShell({
+  children,
+  title,
+  subtitle,
+  actions,
+}: {
+  children: ReactNode;
+  title: string;
+  subtitle?: string;
+  actions?: ReactNode;
 }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
@@ -36,7 +52,9 @@ export function AdminShell({ children, title, subtitle, actions }: {
             const active = n.to === "/admin" ? path === n.to : path.startsWith(n.to);
             const Icon = n.icon;
             return (
-              <Link key={n.to} to={n.to}
+              <Link
+                key={n.to}
+                to={n.to}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                   active
                     ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
@@ -51,12 +69,19 @@ export function AdminShell({ children, title, subtitle, actions }: {
         </nav>
         <div className="border-t border-sidebar-border p-3">
           <div className="flex items-center gap-3 rounded-lg p-2">
-            <div className="grid size-9 place-items-center rounded-full bg-accent text-accent-foreground text-xs font-semibold">JH</div>
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium">Jason Hernandez</div>
-              <div className="truncate text-[11px] text-muted-foreground">Placement Officer</div>
+            <div className="grid size-9 place-items-center rounded-full bg-accent text-accent-foreground text-xs font-semibold">
+              PC
             </div>
-            <Link to="/admin-login" aria-label="Log out" className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-medium">Placement Cell</div>
+              <div className="truncate text-[11px] text-muted-foreground">Console access</div>
+            </div>
+            <Link
+              to="/admin-login"
+              aria-label="Log out"
+              onClick={() => clearAdminSignedIn()}
+              className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
               <LogOut className="size-4" />
             </Link>
           </div>
