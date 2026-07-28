@@ -79,10 +79,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "PlacePrep AI · Placement Readiness Platform" },
-      { name: "description", content: "AI-powered placement readiness — quizzes, mock interviews, personalized roadmaps, and analytics for students and placement cells." },
+      {
+        name: "description",
+        content:
+          "AI-powered placement readiness — quizzes, mock interviews, personalized roadmaps, and analytics for students and placement cells.",
+      },
       { name: "author", content: "PlacePrep" },
       { property: "og:title", content: "PlacePrep AI · Placement Readiness Platform" },
-      { property: "og:description", content: "AI-powered placement readiness for students and placement cells." },
+      {
+        property: "og:description",
+        content: "AI-powered placement readiness for students and placement cells.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -90,7 +97,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      },
       { rel: "icon", href: "/placeprep.png", type: "image/x-icon" },
     ],
   }),

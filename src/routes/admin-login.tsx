@@ -4,12 +4,16 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { setAdminSignedIn } from "@/lib/session";
 
 export const Route = createFileRoute("/admin-login")({
   head: () => ({
     meta: [
       { title: "Admin sign in · PlacePrep AI" },
-      { name: "description", content: "Placement cell console — sign in to manage students, companies and analytics." },
+      {
+        name: "description",
+        content: "Placement cell console — sign in to manage students, companies and analytics.",
+      },
     ],
   }),
   component: AdminLogin,
@@ -24,7 +28,11 @@ function AdminLogin() {
         onSubmit={(e) => {
           e.preventDefault();
           setLoading(true);
-          setTimeout(() => nav({ to: "/admin" }), 500);
+          // Note: the backend doesn't yet expose admin authentication — the /admin/*
+          // and /companies management endpoints are open. This screen is a client-side
+          // gate only, until the backend adds real admin auth.
+          setAdminSignedIn();
+          setTimeout(() => nav({ to: "/admin" }), 300);
         }}
         className="w-full max-w-md card-surface p-8"
       >
@@ -40,18 +48,27 @@ function AdminLogin() {
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="email">Work email</Label>
-            <Input id="email" type="email" defaultValue="placement.officer@college.edu" required />
+            <Input id="email" type="email" placeholder="placement.officer@college.edu" required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pw">Password</Label>
-            <Input id="pw" type="password" defaultValue="demopassword" required />
+            <Input id="pw" type="password" required />
           </div>
         </div>
         <Button type="submit" className="mt-6 w-full" disabled={loading}>
-          {loading ? "Signing in…" : (<>Enter console <ArrowRight className="size-4" /></>)}
+          {loading ? (
+            "Signing in…"
+          ) : (
+            <>
+              Enter console <ArrowRight className="size-4" />
+            </>
+          )}
         </Button>
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Are you a student? <Link to="/" className="text-primary hover:underline">Student sign in</Link>
+          Are you a student?{" "}
+          <Link to="/" className="text-primary hover:underline">
+            Student sign in
+          </Link>
         </p>
       </form>
     </div>
