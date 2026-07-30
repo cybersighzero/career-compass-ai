@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Camera, Clock, Mic, PhoneOff, Send, VideoOff, User } from "lucide-react";
+import { Bot, Camera, Clock, Mic, PhoneOff, Send, User, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { startInterview, getNextQuestion, finishInterview } from "@/lib/api";
+import { startInterview, getNextQuestion, finishInterview, reportGazeViolation } from "@/lib/api";
 import { getStoredStudent } from "@/lib/session";
 import { logInterviewAttempt } from "@/lib/history";
+import { startGazeDetection } from "@/lib/gaze";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/interview")({
@@ -36,11 +37,45 @@ function InterviewPage() {
   const [seconds, setSeconds] = useState(0);
   const questionCount = useRef(0);
 
+  // Camera/mic permission gate — the interview is blocked until both are granted.
+  const [permission, setPermission] = useState<"pending" | "granted" | "denied">("pending");
+  const [permissionError, setPermissionError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    if (!student) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        setPermission("granted");
+      } catch {
+        if (!cancelled) {
+          setPermission("denied");
+          setPermissionError("Camera and microphone access is required to start the AI interview.");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!student) {
       nav({ to: "/" });
       return;
     }
+    if (permission !== "granted") return;
     let cancelled = false;
     (async () => {
       try {
@@ -60,16 +95,68 @@ function InterviewPage() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [permission]);
 
   useEffect(() => {
     const t = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(t);
   }, []);
+
+  // Start gaze/head-pose monitoring once the interview is live and the camera is up.
+  useEffect(() => {
+    if (permission !== "granted" || !interviewId || !videoRef.current) return;
+    const stop = startGazeDetection(videoRef.current, {
+      onSustainedLookAway: () => {
+        reportGazeViolation(interviewId)
+          .then((updated) => {
+            if (updated.status === "disqualified") {
+              toast.error("Interview disqualified due to repeated look-away violations.");
+              nav({ to: "/results" });
+            } else {
+              toast.warning("Please keep looking at the screen during the interview.");
+            }
+          })
+          .catch(() => {
+            // Don't interrupt the interview if the violation report fails to send.
+          });
+      },
+    });
+    return stop;
+  }, [permission, interviewId, nav]);
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
 
   if (!student) return null;
+
+  if (permission === "pending") {
+    return (
+      <div className="min-h-screen grid place-items-center bg-background px-6 text-center">
+        <div>
+          <div className="mx-auto mb-4 grid size-14 place-items-center rounded-2xl bg-primary-soft text-primary">
+            <Camera className="size-6" />
+          </div>
+          <p className="text-sm text-muted-foreground">Requesting camera and microphone access…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (permission === "denied") {
+    return (
+      <div className="min-h-screen grid place-items-center bg-background px-6 text-center">
+        <div className="max-w-sm">
+          <div className="mx-auto mb-4 grid size-14 place-items-center rounded-2xl bg-destructive/15 text-destructive">
+            <ShieldAlert className="size-6" />
+          </div>
+          <p className="text-sm font-medium">Camera & microphone access required</p>
+          <p className="mt-2 text-sm text-muted-foreground">{permissionError}</p>
+          <Button className="mt-6" variant="outline" onClick={() => nav({ to: "/dashboard" })}>
+            Back to dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const send = async () => {
     if (!draft.trim() || !interviewId || sending) return;
@@ -89,6 +176,7 @@ function InterviewPage() {
   };
 
   const endInterview = async () => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
     if (!interviewId) return nav({ to: "/results" });
     setEnding(true);
     try {
@@ -138,16 +226,14 @@ function InterviewPage() {
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-4">
           <div className="card-surface overflow-hidden">
-            <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-slate-800 grid place-items-center">
-              <div className="text-center text-white/70">
-                <div className="mx-auto grid size-16 place-items-center rounded-full bg-white/10 mb-3">
-                  <VideoOff className="size-6" />
-                </div>
-                <div className="text-sm">Camera preview isn't wired up yet</div>
-                <div className="text-xs text-white/40 mt-1">
-                  Your session would appear here once video capture is added
-                </div>
-              </div>
+            <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-slate-800">
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                playsInline
+                className="absolute inset-0 size-full object-cover"
+              />
               <div className="absolute bottom-3 left-3 flex items-center gap-2">
                 <div className="rounded-md bg-black/50 backdrop-blur px-2 py-1 text-xs text-white/90 flex items-center gap-1.5">
                   <User className="size-3" /> You

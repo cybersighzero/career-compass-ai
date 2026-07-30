@@ -124,6 +124,7 @@ export interface Interview {
   transcript: string | null;
   status: string;
   ai_feedback: string | null;
+  gaze_violations?: number;
 }
 
 export interface NextQuestionResult {
@@ -224,6 +225,9 @@ export const getNextQuestion = (interviewId: number, studentAnswer = "") =>
 
 export const finishInterview = (interviewId: number) =>
   request<InterviewFinishResult>(`/interview/${interviewId}/finish`, { method: "PUT" });
+
+export const reportGazeViolation = (interviewId: number) =>
+  request<Interview>(`/interview/${interviewId}/gaze-violation`, { method: "POST" });
 
 // ---------- Admin ----------
 
