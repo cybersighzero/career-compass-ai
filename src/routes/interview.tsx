@@ -54,7 +54,6 @@ function InterviewPage() {
           return;
         }
         streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
         setPermission("granted");
       } catch {
         if (!cancelled) {
@@ -101,6 +100,12 @@ function InterviewPage() {
     const t = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (permission === "granted" && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [permission]);
 
   // Start gaze/head-pose monitoring once the interview is live and the camera is up.
   useEffect(() => {
